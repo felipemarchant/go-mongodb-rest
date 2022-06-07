@@ -16,6 +16,7 @@ func main() {
 	router := gin.New()
 
 	routes.HealthCheck(router)
+	routes.User(router)
 
 	router.Use(gin.Logger())
 	log.Fatal(router.Run(":" + port))
