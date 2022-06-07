@@ -44,6 +44,7 @@ func SignUp(c *gin.Context) {
 
 	if count > 0 {
 		c.JSON(http.StatusBadRequest, gin.H{"status": http.StatusBadRequest, "data": "User já existe."})
+		return
 	}
 
 	count, err = users.CountDocuments(ctx, bson.M{"phone": user.Phone})
@@ -77,5 +78,5 @@ func SignUp(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, "Usuário inscrito com sucesso.")
+	c.JSON(http.StatusCreated, gin.H{"status": http.StatusCreated, "data": user})
 }
