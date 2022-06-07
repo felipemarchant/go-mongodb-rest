@@ -2,9 +2,9 @@ package controllers
 
 import (
 	"fmt"
+	"github.com/felipemarchant/go-mongo-rest/database"
+	"github.com/felipemarchant/go-mongo-rest/utils"
 	"github.com/gin-gonic/gin"
-	"go-mongo-rest/database"
-	"go-mongo-rest/utils"
 	"net/http"
 )
 

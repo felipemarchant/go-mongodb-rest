@@ -1,4 +1,4 @@
-module go-mongo-rest
+module github.com/felipemarchant/go-mongo-rest
 
 go 1.18
 

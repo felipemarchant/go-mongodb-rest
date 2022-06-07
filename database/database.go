@@ -3,7 +3,7 @@ package database
 import (
 	"context"
 	"fmt"
-	"go-mongo-rest/utils"
+	"github.com/felipemarchant/go-mongo-rest/utils"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"

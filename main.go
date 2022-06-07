@@ -1,8 +1,8 @@
 package main
 
 import (
+	"github.com/felipemarchant/go-mongo-rest/routes"
 	"github.com/gin-gonic/gin"
-	"go-mongo-rest/routes"
 	"log"
 	"os"
 )

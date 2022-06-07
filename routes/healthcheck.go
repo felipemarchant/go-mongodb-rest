@@ -1,8 +1,8 @@
 package routes
 
 import (
+	"github.com/felipemarchant/go-mongo-rest/controllers"
 	"github.com/gin-gonic/gin"
-	"go-mongo-rest/controllers"
 )
 
 func HealthCheck(g *gin.Engine) {
