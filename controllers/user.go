@@ -3,13 +3,13 @@ package controllers
 import (
 	"github.com/felipemarchant/go-mongo-rest/database"
 	"github.com/felipemarchant/go-mongo-rest/models"
+	r "github.com/felipemarchant/go-mongo-rest/rest"
 	"github.com/felipemarchant/go-mongo-rest/security"
 	"github.com/felipemarchant/go-mongo-rest/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"log"
 	"net/http"
 	"time"
 )
@@ -23,7 +23,7 @@ func SignUp(c *gin.Context) {
 
 	var user models.User
 	if err := c.BindJSON(&user); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		r.Response(c, err.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -37,25 +37,23 @@ func SignUp(c *gin.Context) {
 
 	count, err := users.CountDocuments(ctx, bson.M{"email": user.Email})
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"status": http.StatusInternalServerError, "data": err.Error()})
-		log.Panic(err)
+		r.Response(c, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	if count > 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"status": http.StatusBadRequest, "data": "User já existe."})
+		r.Response(c, "User já existe.", http.StatusBadRequest)
 		return
 	}
 
 	count, err = users.CountDocuments(ctx, bson.M{"phone": user.Phone})
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"status": http.StatusInternalServerError, "data": err.Error()})
-		log.Panic(err)
+		r.Response(c, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	if count > 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"status": http.StatusBadRequest, "data": "Phone está em uso."})
+		r.Response(c, "Phone está em uso.", http.StatusBadRequest)
 		return
 	}
 
@@ -74,9 +72,9 @@ func SignUp(c *gin.Context) {
 
 	_, insertErr := users.InsertOne(ctx, user)
 	if insertErr != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"status": http.StatusInternalServerError, "data": "Houve um problema na inscrição do usuário."})
+		r.Response(c, "Houve um problema na inscrição do usuário.", http.StatusInternalServerError)
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{"status": http.StatusCreated, "data": user})
+	r.Response(c, user, http.StatusCreated)
 }
