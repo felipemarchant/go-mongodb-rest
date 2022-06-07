@@ -21,7 +21,7 @@ type SignedDetails struct {
 	jwt.StandardClaims
 }
 
-var SecretKey = os.Getenv("SECRET_KEY")
+var secretKey = os.Getenv("SECRET_KEY")
 
 func TokenGenerator(email string, firstname string, lastname string, uid string) (signedToken string, signedRefreshToken string, err error) {
 	claims := &SignedDetails{
@@ -40,12 +40,12 @@ func TokenGenerator(email string, firstname string, lastname string, uid string)
 		},
 	}
 
-	token, err := jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString([]byte(SecretKey))
+	token, err := jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString([]byte(secretKey))
 	if err != nil {
 		return "", "", err
 	}
 
-	refreshToken, err := jwt.NewWithClaims(jwt.SigningMethodHS256, refreshClaims).SignedString([]byte(SecretKey))
+	refreshToken, err := jwt.NewWithClaims(jwt.SigningMethodHS256, refreshClaims).SignedString([]byte(secretKey))
 	if err != nil {
 		log.Panicln(err)
 		return
@@ -56,7 +56,7 @@ func TokenGenerator(email string, firstname string, lastname string, uid string)
 
 func ValidateToken(signedToken string) (claims *SignedDetails, msg string) {
 	token, err := jwt.ParseWithClaims(signedToken, &SignedDetails{}, func(token *jwt.Token) (interface{}, error) {
-		return []byte(SecretKey), nil
+		return []byte(secretKey), nil
 	})
 
 	if err != nil {
