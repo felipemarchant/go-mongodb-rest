@@ -8,20 +8,19 @@ import (
 )
 
 func HealthCheck(c *gin.Context) {
-	ctx, cancel := utils.ContextWithTimeout()
+	ctx, cancel := utils.PingContextWithTimeout()
 	defer cancel()
 	defer ctx.Done()
 
-	response := gin.H{"status": "OK"}
+	response := gin.H{"status": http.StatusOK, "data": "OK"}
 
 	err := database.Client.Ping(ctx)
 	if err != nil {
-		response["status"] = "Internal Server Error"
-		response["err"] = err.Error()
+		response["status"] = http.StatusInternalServerError
+		response["data"] = err.Error()
 		c.AbortWithStatusJSON(http.StatusInternalServerError, response)
 		return
 	}
 
-	c.Header("Content-Type", "application/json")
-	c.JSON(http.StatusFound, response)
+	c.JSON(http.StatusOK, response)
 }
