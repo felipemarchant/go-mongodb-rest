@@ -13,8 +13,7 @@ func HealthCheck(c *gin.Context) {
 	defer cancel()
 	defer ctx.Done()
 
-	err := database.Client.Ping(ctx)
-	if err != nil {
+	if err := database.Client.Ping(ctx); err != nil {
 		r.Response(c, err.Error(), http.StatusInternalServerError)
 		return
 	}
