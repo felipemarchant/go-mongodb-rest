@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"github.com/felipemarchant/go-mongo-rest/database"
+	r "github.com/felipemarchant/go-mongo-rest/rest"
 	"github.com/felipemarchant/go-mongo-rest/utils"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -12,15 +13,11 @@ func HealthCheck(c *gin.Context) {
 	defer cancel()
 	defer ctx.Done()
 
-	response := gin.H{"status": http.StatusOK, "data": "OK"}
-
 	err := database.Client.Ping(ctx)
 	if err != nil {
-		response["status"] = http.StatusInternalServerError
-		response["data"] = err.Error()
-		c.AbortWithStatusJSON(http.StatusInternalServerError, response)
+		r.Response(c, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	c.JSON(http.StatusOK, response)
+	r.Response(c, "OK", http.StatusOK)
 }
