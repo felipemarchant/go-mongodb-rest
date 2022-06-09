@@ -15,14 +15,11 @@ func main() {
 	}
 
 	router := gin.New()
-
 	router.Use(gin.Logger())
 	router.Use(rest.JsonMiddleware())
-
-	routes.HealthCheck(router)
-	routes.User(router)
-	routes.Address(router)
-	routes.Product(router)
+	routes.Portal(router)
+	router.Use(rest.Authentication())
+	routes.UserAccount(router)
 
 	log.Fatal(router.Run(":" + port))
 }

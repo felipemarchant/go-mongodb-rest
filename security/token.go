@@ -17,18 +17,18 @@ type SignedDetails struct {
 	Email     string
 	FirstName string
 	LastName  string
-	Uid       string
+	Id        primitive.ObjectID
 	jwt.StandardClaims
 }
 
 var secretKey = os.Getenv("SECRET_KEY")
 
-func TokenGenerator(email string, firstname string, lastname string, uid string) (signedToken string, signedRefreshToken string, err error) {
+func TokenGenerator(email string, firstname string, lastname string, uid primitive.ObjectID) (signedToken string, signedRefreshToken string, err error) {
 	claims := &SignedDetails{
 		Email:     email,
 		FirstName: firstname,
 		LastName:  lastname,
-		Uid:       uid,
+		Id:        uid,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: time.Now().Local().Add(time.Hour * time.Duration(24)).Unix(),
 		},

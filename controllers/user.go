@@ -62,8 +62,7 @@ func SignUp(c *gin.Context) {
 	user.CreatedAt, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
 	user.UpdatedAt, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
 	user.Id = primitive.NewObjectID()
-	user.UserId = user.Id.Hex()
-	token, refreshToken, _ := security.TokenGenerator(*user.Email, *user.FirstName, *user.LastName, user.UserId)
+	token, refreshToken, _ := security.TokenGenerator(*user.Email, *user.FirstName, *user.LastName, user.Id)
 	user.Token = &token
 	user.RefreshToken = &refreshToken
 	user.UserCart = make([]models.ProductUser, 0)
@@ -104,8 +103,8 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	token, refreshToken, _ := security.TokenGenerator(*foundUser.Email, *foundUser.FirstName, *foundUser.LastName, foundUser.UserId)
-	security.UpdateAllTokens(token, refreshToken, foundUser.UserId)
+	token, refreshToken, _ := security.TokenGenerator(*foundUser.Email, *foundUser.FirstName, *foundUser.LastName, foundUser.Id)
+	security.UpdateAllTokens(token, refreshToken, foundUser.Id.String())
 
 	r.Response(c, foundUser, http.StatusFound)
 }
