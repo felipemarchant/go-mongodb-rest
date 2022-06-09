@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/felipemarchant/go-mongo-rest/rest"
 	"github.com/felipemarchant/go-mongo-rest/routes"
 	"github.com/gin-gonic/gin"
 	"log"
@@ -15,10 +16,13 @@ func main() {
 
 	router := gin.New()
 
+	router.Use(gin.Logger())
+	router.Use(rest.JsonMiddleware())
+
 	routes.HealthCheck(router)
 	routes.User(router)
 	routes.Address(router)
+	routes.Product(router)
 
-	router.Use(gin.Logger())
 	log.Fatal(router.Run(":" + port))
 }

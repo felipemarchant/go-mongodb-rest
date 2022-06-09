@@ -31,7 +31,7 @@ func AddAddress(c *gin.Context) {
 	}
 
 	var addresses models.Address
-	addresses.AddressId = primitive.NewObjectID()
+	addresses.Id = primitive.NewObjectID()
 
 	if err = c.BindJSON(&addresses); err != nil {
 		r.Response(c, err.Error(), http.StatusNotAcceptable)
@@ -45,8 +45,8 @@ func AddAddress(c *gin.Context) {
 	users := database.Client.UserCollection()
 
 	matchFilter := bson.D{{Key: "$match", Value: bson.D{primitive.E{Key: "_id", Value: address}}}}
-	unwind := bson.D{{Key: "$unwind", Value: bson.D{primitive.E{Key: "path", Value: "$address"}}}}
-	group := bson.D{{Key: "$group", Value: bson.D{primitive.E{Key: "_id", Value: "$address_id"}, {Key: "count", Value: bson.D{primitive.E{Key: "$sum", Value: 1}}}}}}
+	unwind := bson.D{{Key: "$unwind", Value: bson.D{primitive.E{Key: "path", Value: "$addresses"}}}}
+	group := bson.D{{Key: "$group", Value: bson.D{primitive.E{Key: "_id", Value: "$_id"}, {Key: "count", Value: bson.D{primitive.E{Key: "$sum", Value: 1}}}}}}
 
 	cursor, err := users.Aggregate(ctx, mongo.Pipeline{matchFilter, unwind, group})
 	if err != nil {
@@ -68,7 +68,7 @@ func AddAddress(c *gin.Context) {
 
 	if size < 2 {
 		filter := bson.D{primitive.E{Key: "_id", Value: address}}
-		update := bson.D{{Key: "$push", Value: bson.D{primitive.E{Key: "address", Value: addresses}}}}
+		update := bson.D{{Key: "$push", Value: bson.D{primitive.E{Key: "addresses", Value: addresses}}}}
 		_, err := users.UpdateOne(ctx, filter, update)
 
 		if err != nil {
@@ -110,7 +110,7 @@ func EditHomeAddress(c *gin.Context) {
 	users := database.Client.UserCollection()
 
 	filter := bson.D{primitive.E{Key: "_id", Value: userIdx}}
-	update := bson.D{{Key: "$set", Value: bson.D{primitive.E{Key: "address.0.house_name", Value: editAddress.House}, {Key: "address.0.street_name", Value: editAddress.Street}, {Key: "address.0.city_name", Value: editAddress.City}, {Key: "address.0.pin_code", Value: editAddress.Pincode}}}}
+	update := bson.D{{Key: "$set", Value: bson.D{primitive.E{Key: "addresses.0.house_name", Value: editAddress.House}, {Key: "addresses.0.street_name", Value: editAddress.Street}, {Key: "addresses.0.city_name", Value: editAddress.City}, {Key: "addresses.0.pin_code", Value: editAddress.PinCode}}}}
 
 	_, err = users.UpdateOne(ctx, filter, update)
 	if err != nil {
@@ -145,7 +145,7 @@ func EditWorkAddress(c *gin.Context) {
 	defer cancel()
 	defer ctx.Done()
 	filter := bson.D{primitive.E{Key: "_id", Value: userIdx}}
-	update := bson.D{{Key: "$set", Value: bson.D{primitive.E{Key: "address.1.house_name", Value: editAddress.House}, {Key: "address.1.street_name", Value: editAddress.Street}, {Key: "address.1.city_name", Value: editAddress.City}, {Key: "address.1.pin_code", Value: editAddress.Pincode}}}}
+	update := bson.D{{Key: "$set", Value: bson.D{primitive.E{Key: "addresses.1.house_name", Value: editAddress.House}, {Key: "addresses.1.street_name", Value: editAddress.Street}, {Key: "addresses.1.city_name", Value: editAddress.City}, {Key: "addresses.1.pin_code", Value: editAddress.PinCode}}}}
 
 	users := database.Client.UserCollection()
 
@@ -178,7 +178,7 @@ func DeleteAddress(c *gin.Context) {
 	defer ctx.Done()
 
 	filter := bson.D{primitive.E{Key: "_id", Value: userIdx}}
-	update := bson.D{{Key: "$set", Value: bson.D{primitive.E{Key: "address", Value: addresses}}}}
+	update := bson.D{{Key: "$set", Value: bson.D{primitive.E{Key: "addresses", Value: addresses}}}}
 
 	users := database.Client.UserCollection()
 

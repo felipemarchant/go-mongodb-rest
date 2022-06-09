@@ -61,14 +61,14 @@ func SignUp(c *gin.Context) {
 	user.Password = &password
 	user.CreatedAt, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
 	user.UpdatedAt, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
-	user.ID = primitive.NewObjectID()
-	user.UserId = user.ID.Hex()
+	user.Id = primitive.NewObjectID()
+	user.UserId = user.Id.Hex()
 	token, refreshToken, _ := security.TokenGenerator(*user.Email, *user.FirstName, *user.LastName, user.UserId)
 	user.Token = &token
 	user.RefreshToken = &refreshToken
 	user.UserCart = make([]models.ProductUser, 0)
-	user.AddressDetails = make([]models.Address, 0)
-	user.OrderStatus = make([]models.Order, 0)
+	user.Addresses = make([]models.Address, 0)
+	user.Orders = make([]models.Order, 0)
 
 	_, insertErr := users.InsertOne(ctx, user)
 	if insertErr != nil {
