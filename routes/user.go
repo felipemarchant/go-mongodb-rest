@@ -7,4 +7,5 @@ import (
 
 func User(g *gin.Engine) {
 	g.POST("/users/signup", controllers.SignUp)
+	g.POST("/users/signin", controllers.Login)
 }

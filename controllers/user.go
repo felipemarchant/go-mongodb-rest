@@ -78,3 +78,34 @@ func SignUp(c *gin.Context) {
 
 	r.Response(c, user, http.StatusCreated)
 }
+
+func Login(c *gin.Context) {
+	var ctx, cancel = utils.ContextWithTimeout()
+	defer cancel()
+
+	var user models.User
+	var foundUser models.User
+	if err := c.BindJSON(&user); err != nil {
+		c.JSON(http.StatusBadRequest, err)
+		return
+	}
+
+	users := database.Client.UserCollection()
+
+	err := users.FindOne(ctx, bson.M{"email": user.Email}).Decode(&foundUser)
+	if err != nil {
+		r.Response(c, "Login ou Password incorreto", http.StatusUnauthorized)
+		return
+	}
+
+	PasswordIsValid, msg := security.VerifyPassword(*user.Password, *foundUser.Password)
+	if !PasswordIsValid {
+		r.Response(c, msg, http.StatusInternalServerError)
+		return
+	}
+
+	token, refreshToken, _ := security.TokenGenerator(*foundUser.Email, *foundUser.FirstName, *foundUser.LastName, foundUser.UserId)
+	security.UpdateAllTokens(token, refreshToken, foundUser.UserId)
+
+	r.Response(c, foundUser, http.StatusFound)
+}
