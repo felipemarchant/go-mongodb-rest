@@ -17,25 +17,20 @@ type MongoClient struct {
 // newInstance from database
 func newInstance() *mongo.Client {
 	client, err := mongo.NewClient(options.Client().ApplyURI("mongodb://dev:strongpassword@localhost:27017"))
-
 	if err != nil {
 		utils.LogFatal(err)
 	}
-
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-
 	err = client.Connect(ctx)
 	if err != nil {
 		utils.LogFatal(err)
 	}
-
 	err = client.Ping(context.TODO(), nil)
 	if err != nil {
 		utils.LogPrintln("MongoDB: Problema ao se conectar")
 		return nil
 	}
-
 	fmt.Println("MongoDB: Conexão realizado com sucesso")
 	return client
 }

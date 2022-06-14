@@ -33,24 +33,20 @@ func TokenGenerator(email string, firstname string, lastname string, uid primiti
 			ExpiresAt: time.Now().Local().Add(time.Hour * time.Duration(24)).Unix(),
 		},
 	}
-
 	refreshClaims := &SignedDetails{
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: time.Now().Local().Add(time.Hour * time.Duration(168)).Unix(),
 		},
 	}
-
 	token, err := jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString([]byte(secretKey))
 	if err != nil {
 		return "", "", err
 	}
-
 	refreshToken, err := jwt.NewWithClaims(jwt.SigningMethodHS256, refreshClaims).SignedString([]byte(secretKey))
 	if err != nil {
 		log.Panicln(err)
 		return
 	}
-
 	return token, refreshToken, err
 }
 
@@ -58,23 +54,19 @@ func ValidateToken(signedToken string) (claims *SignedDetails, msg string) {
 	token, err := jwt.ParseWithClaims(signedToken, &SignedDetails{}, func(token *jwt.Token) (interface{}, error) {
 		return []byte(secretKey), nil
 	})
-
 	if err != nil {
 		msg = err.Error()
 		return
 	}
-
 	claims, ok := token.Claims.(*SignedDetails)
 	if !ok {
 		msg = "Token é inválido"
 		return
 	}
-
 	if claims.ExpiresAt < time.Now().Local().Unix() {
 		msg = "Token está expirado"
 		return
 	}
-
 	return claims, msg
 }
 
@@ -86,13 +78,11 @@ func UpdateAllTokens(signedToken string, signedRefreshtoken string, userid strin
 	updateObj = append(updateObj, bson.E{Key: "refresh_token", Value: signedRefreshtoken})
 	updatedAt, _ := time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
 	updateObj = append(updateObj, bson.E{Key: "updated_at", Value: updatedAt})
-
 	upsert := true
 	filter := bson.M{"user_id": userid}
 	opt := options.UpdateOptions{
 		Upsert: &upsert,
 	}
-
 	_, err := users.UpdateOne(ctx, filter, bson.D{{Key: "$set", Value: updateObj}}, &opt)
 	defer cancel()
 	if err != nil {

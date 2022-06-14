@@ -14,14 +14,12 @@ func Authentication() gin.HandlerFunc {
 			c.Abort()
 			return
 		}
-
 		claims, err := security.ValidateToken(token)
 		if err != "" {
 			Response(c, "Forbidden", http.StatusForbidden)
 			c.Abort()
 			return
 		}
-
 		c.Set("UserPrincipal", claims)
 		c.Next()
 	}

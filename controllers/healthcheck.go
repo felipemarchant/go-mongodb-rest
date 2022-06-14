@@ -12,11 +12,9 @@ func HealthCheck(c *gin.Context) {
 	ctx, cancel := utils.PingContextWithTimeout()
 	defer cancel()
 	defer ctx.Done()
-
 	if err := database.Client.Ping(ctx); err != nil {
 		r.Response(c, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
 	r.Response(c, "OK", http.StatusOK)
 }
