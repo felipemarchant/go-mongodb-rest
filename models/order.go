@@ -6,9 +6,9 @@ import (
 )
 
 type Order struct {
-	OrderId       primitive.ObjectID `json:"id" bson:"_id"`
-	OrderCart     []ProductUser      `json:"order_list"  bson:"order_list"`
-	OrdereredAt   time.Time          `json:"ordered_on"  bson:"ordered_on"`
+	Id            primitive.ObjectID `json:"id" bson:"_id"`
+	Cart          []Cart             `json:"cart"  bson:"cart"`
+	CreatedAt     time.Time          `json:"created_at"  bson:"created_at"`
 	Price         int                `json:"total_price" bson:"total_price"`
 	Discount      *int               `json:"discount"    bson:"discount"`
 	PaymentMethod Payment            `json:"payment_method" bson:"payment_method"`

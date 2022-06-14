@@ -65,7 +65,7 @@ func SignUp(c *gin.Context) {
 	token, refreshToken, _ := security.TokenGenerator(*user.Email, *user.FirstName, *user.LastName, user.Id)
 	user.Token = &token
 	user.RefreshToken = &refreshToken
-	user.UserCart = make([]models.ProductUser, 0)
+	user.UserCart = make([]models.Cart, 0)
 	user.Addresses = make([]models.Address, 0)
 	user.Orders = make([]models.Order, 0)
 
